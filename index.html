@@ -372,13 +372,18 @@ li:hover .arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
                Without it a white background floods the square white.
      animate — re-sample every frame so a gif plays through the
                pixel render instead of freezing on frame one.
+     zoom    — crop in on the subject. The gif's figure only spans
+               ~36% x 44% of its frame, so at 1x it sits marooned in
+               blue. 1.85 fills the square without clipping on any of
+               the 36 rotation frames.
+     focusY  — vertical placement of the crop, 0 top .. 1 bottom.
    ══════════════════════════════════════════════════════════ */
 
 const BG = '#1400ee', BLOCK = 5, GAP = 1;
 
 const SOURCES = [
-  { file: '360.gif',     invert: true,  animate: true  },
-  { file: 'augusts.png', invert: false, animate: false }
+  { file: 'kyc-gif.gif', invert: true,  animate: true,  zoom: 1.85, focusY: 0.5  },
+  { file: 'augusts.png', invert: false, animate: false, zoom: 1,    focusY: 0.12 }
 ];
 
 const hero    = document.getElementById('hero');
@@ -391,16 +396,16 @@ const buf    = document.createElement('canvas');
 const bufCtx = buf.getContext('2d', { willReadFrequently: true });
 
 let px = null, cols = 0, rows = 0, t = 0, glitch = [], src = null;
-let invert = false, animate = false;
+let invert = false, animate = false, zoom = 1, focusY = 0.5;
 
 function sample() {
   if (!src || !src.naturalWidth || !cols) return;
 
-  // largest square of the source; on a tall portrait bias upward for the face
+  // square crop, tightened by zoom and placed vertically by focusY
   const iw = src.naturalWidth, ih = src.naturalHeight;
-  const side = Math.min(iw, ih);
+  const side = Math.min(iw, ih) / zoom;
   const sx = (iw - side) / 2;
-  const sy = ih > iw ? (ih - side) * 0.12 : (ih - side) / 2;
+  const sy = (ih - side) * focusY;
 
   bufCtx.fillStyle = BG;
   bufCtx.fillRect(0, 0, cols, rows);
@@ -493,16 +498,21 @@ function sizeHero() {
 /* try each source in turn; a 404 falls through to the next one */
 function load(i) {
   if (i >= SOURCES.length) return;            // none loaded — keep the vignette
-  const { file, invert: inv, animate: anim } = SOURCES[i];
+  const s = SOURCES[i];
   const img = new Image();
   img.crossOrigin = 'anonymous';
   // kept in the document (not display:none) so browsers keep gifs running
   img.style.cssText =
     'position:fixed;left:0;top:0;width:1px;height:1px;opacity:0.01;pointer-events:none;z-index:-1;';
-  img.onload  = () => { src = img; invert = inv; animate = anim; sizeHero(); };
+  img.onload  = () => {
+    src = img;
+    invert = s.invert; animate = s.animate;
+    zoom = s.zoom || 1; focusY = s.focusY ?? 0.5;
+    sizeHero();
+  };
   img.onerror = () => { img.remove(); load(i + 1); };
   document.body.appendChild(img);
-  img.src = file;
+  img.src = s.file;
 }
 load(0);
 
