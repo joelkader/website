@@ -362,52 +362,63 @@ li:hover .arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
 
 <script>
 /* ══════════════════════════════════════════════════════════
-   PIXEL AUGUSTUS — augusts.png
+   PIXEL HERO
    Square centre-crop, 3-tone block render on the blue field,
    horizontal glitch bars + slow wave drift. Starts immediately.
+
+   Sources are tried in order and the first that loads wins, so a
+   missing file degrades instead of blanking the hero.
+     invert  — for dark-on-light art, making ink the bright signal.
+               Without it a white background floods the square white.
+     animate — re-sample every frame so a gif plays through the
+               pixel render instead of freezing on frame one.
    ══════════════════════════════════════════════════════════ */
 
 const BG = '#1400ee', BLOCK = 5, GAP = 1;
 
+const SOURCES = [
+  { file: '360.gif',     invert: true,  animate: true  },
+  { file: 'augusts.png', invert: false, animate: false }
+];
+
 const hero    = document.getElementById('hero');
 const heroCtx = hero.getContext('2d');
 
+/* offscreen buffer holding exactly one pixel per rendered block, so
+   re-sampling an animated source every frame stays cheap — a ~120x120
+   read rather than ~600x600. drawImage does the downscale averaging. */
+const buf    = document.createElement('canvas');
+const bufCtx = buf.getContext('2d', { willReadFrequently: true });
+
 let px = null, cols = 0, rows = 0, t = 0, glitch = [], src = null;
+let invert = false, animate = false;
 
 function sample() {
-  if (!src || !src.naturalWidth) return;
-
-  const S = hero.width;
-  const off = document.createElement('canvas');
-  off.width = off.height = S;
-  const o = off.getContext('2d');
-
-  o.fillStyle = BG;
-  o.fillRect(0, 0, S, S);
+  if (!src || !src.naturalWidth || !cols) return;
 
   // largest square of the source; on a tall portrait bias upward for the face
   const iw = src.naturalWidth, ih = src.naturalHeight;
   const side = Math.min(iw, ih);
   const sx = (iw - side) / 2;
   const sy = ih > iw ? (ih - side) * 0.12 : (ih - side) / 2;
-  o.drawImage(src, sx, sy, side, side, 0, 0, S, S);
+
+  bufCtx.fillStyle = BG;
+  bufCtx.fillRect(0, 0, cols, rows);
+  bufCtx.drawImage(src, sx, sy, side, side, 0, 0, cols, rows);
 
   let d;
-  try { d = o.getImageData(0, 0, S, S).data; }
+  try { d = bufCtx.getImageData(0, 0, cols, rows).data; }
   catch (e) { return; }                       // tainted canvas — keep placeholder
 
-  cols = rows = Math.ceil(S / BLOCK);
-  px = new Float32Array(cols * rows);
+  if (!px || px.length !== cols * rows) px = new Float32Array(cols * rows);
 
-  for (let r = 0; r < rows; r++)
-    for (let c = 0; c < cols; c++) {
-      const x = Math.min((c * BLOCK + BLOCK / 2) | 0, S - 1);
-      const y = Math.min((r * BLOCK + BLOCK / 2) | 0, S - 1);
-      const i = (y * S + x) * 4;
-      // contrast boost lifts the marble off the gallery wall
-      let v = (d[i] + d[i+1] + d[i+2]) / 765;
-      px[r * cols + c] = Math.max(0, Math.min(1, (v - 0.38) * 2.2));
-    }
+  for (let i = 0, n = cols * rows; i < n; i++) {
+    const j = i * 4;
+    let v = (d[j] + d[j+1] + d[j+2]) / 765;
+    if (invert) v = 1 - v;
+    // contrast boost lifts the subject off its background
+    px[i] = Math.max(0, Math.min(1, (v - 0.38) * 2.2));
+  }
 }
 
 function drawHero() {
@@ -456,6 +467,7 @@ function drawHero() {
 
 function loop() {
   t += 0.014;
+  if (animate) sample();          // pull the gif's current frame
   if (Math.random() < 0.016)
     glitch.push({
       row: (Math.random() * rows) | 0,
@@ -472,14 +484,27 @@ function loop() {
 function sizeHero() {
   const S = Math.max(1, Math.round(hero.getBoundingClientRect().width));
   hero.width = hero.height = S;
+  cols = rows = Math.ceil(S / BLOCK);
+  buf.width = cols; buf.height = rows;
   px = null;
   sample();
 }
 
-src = new Image();
-src.crossOrigin = 'anonymous';
-src.onload = sizeHero;
-src.src = 'augusts.png';
+/* try each source in turn; a 404 falls through to the next one */
+function load(i) {
+  if (i >= SOURCES.length) return;            // none loaded — keep the vignette
+  const { file, invert: inv, animate: anim } = SOURCES[i];
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  // kept in the document (not display:none) so browsers keep gifs running
+  img.style.cssText =
+    'position:fixed;left:0;top:0;width:1px;height:1px;opacity:0.01;pointer-events:none;z-index:-1;';
+  img.onload  = () => { src = img; invert = inv; animate = anim; sizeHero(); };
+  img.onerror = () => { img.remove(); load(i + 1); };
+  document.body.appendChild(img);
+  img.src = file;
+}
+load(0);
 
 window.addEventListener('resize', sizeHero);
 sizeHero();
