@@ -117,13 +117,23 @@ body {
   min-width: 240px;
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
+  background: var(--blue);
+  isolation: isolate;       /* blend against this blue, not whatever sits behind */
 }
 
 #hero {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;      /* show the gif as authored, never stretched */
+  object-fit: contain;      /* never stretched */
+
+  /* Recolour the black-on-white source to white-on-site-blue.
+     invert turns the paper black and the lines near-white (darkest ink
+     is luma 17, so brightness lifts it the rest of the way to 255).
+     screen then maps that black to exactly the backdrop — #1400ee —
+     while the lifted lines stay pure white. No edge, no white box. */
+  filter: invert(1) brightness(1.12);
+  mix-blend-mode: screen;
 }
 
 .intro {
