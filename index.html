@@ -136,11 +136,12 @@ body {
   filter: invert(1) brightness(1.12);
   mix-blend-mode: screen;
 
-  /* The figure only spans ~36% x 44% of the gif's own canvas, so scale
+  /* The figure only spans ~37% x 42% of the gif's own canvas, so scale
      it up inside the frame rather than growing the frame — the box is
      already capped by 100vh-300px to keep the landing on one screen.
-     Only blank margin overflows and gets clipped; checked against all
-     36 rotation frames, no part of the drawing reaches the edge. */
+     Only blank margin overflows and gets clipped. Measured across all
+     36 rotation frames, the drawing does not reach the edge until
+     2.4x, so there is headroom above this. */
   transform: scale(1.25);
 }
 
@@ -293,7 +294,7 @@ li:hover .arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
   <h1 class="masthead">Joel Kader</h1>
 
   <div class="figure">
-    <img id="hero" src="kyc-gif.gif" alt="Rotating 360 animation">
+    <img id="hero" src="kyc-7675-360.gif" alt="Rotating 360 animation">
   </div>
 
   <div class="intro">
