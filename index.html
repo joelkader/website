@@ -164,16 +164,17 @@ body {
 .intro p.lede { font-weight: 700; }
 
 /* ── about ─────────────────────────────────────────────── */
-/* Fills the viewport exactly, so the about link lands on a full screen
-   with the copy centred both ways. Type and spacing are sized in vh so
-   the whole passage fits without scrolling on short windows too. */
+/* Fills the viewport exactly, so the about link lands on a full screen.
+   The column is centred on the page but the text is left aligned within
+   it. Type and spacing are sized in vh so the whole passage fits
+   without scrolling on short windows too. */
 .about {
   background: #fff;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  text-align: left;         /* column stays centred on the page, text is not */
   padding: clamp(28px, 5vh, 80px) 0;
 }
 
