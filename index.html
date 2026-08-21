@@ -151,7 +151,9 @@ body {
   align-items: center;
   gap: 8px;
   text-align: center;
-  max-width: 520px;
+  /* wide enough to hold the lede on one line — at 520px it wrapped and
+     dropped "world." on its own. Falls back to wrapping on phones. */
+  max-width: 680px;
 }
 
 .intro p {
@@ -317,7 +319,7 @@ li:hover .arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
   </div>
 
   <div class="intro">
-    <p class="lede">Notes on energy, infrastructure, and the systems quietly remaking the world.</p>
+    <p class="lede">Views on energy, infrastructure, and the systems quietly remaking the world.</p>
     <p>Written with curiosity, optimism, and a stubborn respect for reality.</p>
   </div>
 </section>
