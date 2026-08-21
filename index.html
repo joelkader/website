@@ -178,10 +178,14 @@ body {
   padding: clamp(28px, 5vh, 80px) 0;
 }
 
-/* Column width is set in ch so it scales with the type: the authored
-   line breaks then hold their shape instead of re-wrapping at some
-   sizes and not others. Longest line is 105 characters. */
+/* fit-content shrinks the block to its longest line rather than a fixed
+   box, so margin auto centres the text itself on the page. With a fixed
+   box the ragged right edge left a wide gap and the passage read as
+   shoved left even though the box was centred.
+   The ch cap scales with the type, so the authored line breaks hold
+   their shape at every size. Longest line is 105 characters. */
 .about .wrap {
+  width: fit-content;
   max-width: min(118ch, 94vw);
 }
 
