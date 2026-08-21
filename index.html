@@ -164,19 +164,26 @@ body {
 .intro p.lede { font-weight: 700; }
 
 /* ── about ─────────────────────────────────────────────── */
+/* Fills the viewport exactly, so the about link lands on a full screen
+   with the copy centred both ways. Type and spacing are sized in vh so
+   the whole passage fits without scrolling on short windows too. */
 .about {
   background: #fff;
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 108px 0;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(40px, 7vh, 96px) 0;
 }
 
 .about p {
-  font-size: 18px;
+  font-size: clamp(14px, 2.05vh, 19px);
   font-weight: 300;
   color: var(--blue);
-  line-height: 1.8;
-  margin-bottom: 24px;
+  line-height: 1.75;
+  margin-bottom: clamp(14px, 2.6vh, 30px);
+  text-wrap: pretty;        /* avoid orphans on centred lines */
 }
 
 .about p:last-child { margin-bottom: 0; }
@@ -263,8 +270,7 @@ li:hover .arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
 
 @media (max-width: 600px) {
   .wrap { padding: 0 24px; }
-  .about { padding: 84px 0; }
-  .about p { font-size: 17px; }
+  /* .about sizing is fluid (vh-based) and needs no breakpoint override */
 }
 
 </style>
@@ -307,20 +313,21 @@ li:hover .arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
 <section class="about" id="about">
   <div class="wrap">
     <p class="fade">
-      This is a space for thoughts in motion; essays, notes, and fragments on energy, infrastructure,
-      technology, capital, and the deeper systems shaping our world.
-    </p>
-    <p class="fade">
       Every revolution begins with small fractures. Changing incentives, disruptive tools, and the
       gradual but constant reordering of the status quo. Slowly, quietly, then all at once.
     </p>
     <p class="fade">
       It feels increasingly clear that we are entering a new era of building, one shaped not only
       by foundational technologies, but by the implications they carry for existing systems,
-      institutions, and the physical world. Periods like these are rare. They ask for attention,
-      reflection, and a willingness to engage with change.
+      institutions, and the physical world.
     </p>
-    <p class="fade"><strong>This space is my effort to do so.</strong></p>
+    <p class="fade">
+      Periods like these are rare. They ask for attention, reflection, and a willingness to engage
+      with change. This space is my effort to do so.
+    </p>
+    <p class="fade">
+      My goal is to learn, grow, and navigate these changing times with optimism and an open mind.
+    </p>
   </div>
 </section>
 
