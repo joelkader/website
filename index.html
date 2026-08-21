@@ -174,19 +174,27 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: clamp(40px, 7vh, 96px) 0;
+  padding: clamp(28px, 5vh, 80px) 0;
+}
+
+/* Column width is set in ch so it scales with the type: the authored
+   line breaks then hold their shape instead of re-wrapping at some
+   sizes and not others. Longest line is 105 characters. */
+.about .wrap {
+  max-width: min(118ch, 94vw);
 }
 
 .about p {
-  font-size: clamp(14px, 2.05vh, 19px);
+  font-size: clamp(15px, min(1.55vw, 2.6vh), 26px);
   font-weight: 300;
   color: var(--blue);
-  line-height: 1.75;
-  margin-bottom: clamp(14px, 2.6vh, 30px);
-  text-wrap: pretty;        /* avoid orphans on centred lines */
+  line-height: 1.7;
+  margin-bottom: clamp(18px, 3.2vh, 40px);
 }
 
 .about p:last-child { margin-bottom: 0; }
+
+.about p.close { font-weight: 700; }
 
 /* ── writing ───────────────────────────────────────────── */
 .writing {
@@ -312,20 +320,22 @@ li:hover .arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
 <!-- ── about ───────────────────────────────────────────── -->
 <section class="about" id="about">
   <div class="wrap">
+    <!-- line breaks are authored, not reflowed — keep them as written -->
     <p class="fade">
-      Every revolution begins with small fractures. Changing incentives, disruptive tools, and the
-      gradual but constant reordering of the status quo. Slowly, quietly, then all at once.
+      Every revolution begins with small fractures.<br>
+      Changing incentives, disruptive tools, and the gradual but constant reordering of the status quo.<br>
+      Slowly, quietly, then all at once.
     </p>
     <p class="fade">
-      It feels increasingly clear that we are entering a new era of building, one shaped not only
-      by foundational technologies, but by the implications they carry for existing systems,
-      institutions, and the physical world.
+      It feels increasingly clear that we are entering a new era of building, one shaped not only by<br>
+      foundational technologies, but by the implications they carry for<br>
+      existing systems, institutions, and the physical world.
     </p>
     <p class="fade">
-      Periods like these are rare. They ask for attention, reflection, and a willingness to engage
-      with change. This space is my effort to do so.
+      Periods like these are rare. They ask for attention, reflection, and a willingness to engage with change.<br>
+      This space is my effort to do so.
     </p>
-    <p class="fade">
+    <p class="fade close">
       My goal is to learn, grow, and navigate these changing times with optimism and an open mind.
     </p>
   </div>
