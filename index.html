@@ -145,6 +145,21 @@ body {
   transform: scale(1.25);
 }
 
+/* art credit — deliberately quiet, and positioned absolutely so it stays
+   out of the flex flow and does not eat into the landing's height budget */
+.credit {
+  position: absolute;
+  right: 26px;
+  bottom: 14px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.26);
+  transition: color 0.2s;
+}
+
+.credit:hover { color: rgba(255,255,255,0.6); }
+
 .intro {
   display: flex;
   flex-direction: column;
@@ -323,6 +338,8 @@ li:hover .arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
     <p>Driven by curiosity and optimism.</p>
     <p>Views are my own.</p>
   </div>
+
+  <p class="credit">KYC by @jack.butcher</p>
 </section>
 
 <!-- ── about ───────────────────────────────────────────── -->
